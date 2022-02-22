@@ -4,9 +4,14 @@ import { useState, useEffect } from "react";
 import User from "../types/User.interface";
 import axios from "../lib/axios";
 import Loading from "../components/Loading";
-import styles from './app.module.css';
+import styles from "./app.module.css";
+import { useSnackbar } from "notistack";
+import { useRouter } from "next/router";
 
 const Home: NextPage = () => {
+  const { enqueueSnackbar } = useSnackbar();
+	const router = useRouter();
+
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
     // artificial delay TODO: DELETE
@@ -15,13 +20,16 @@ const Home: NextPage = () => {
         .then(({ data }) => {
           setUser(data);
         })
-        .catch(console.error);
+        .catch((error) => {
+          const errorMessage =
+            error.response?.status === 401
+              ? "You need to log in to access this page"
+              : "An error ocurred!";
+
+          enqueueSnackbar(errorMessage, { variant: "error" });
+					router.push('/login')
+        });
     }, 1500);
-    // axios("/profiles", { withCredentials: true })
-    //   .then(({ data }) => {
-    //     setUser(data);
-    //   })
-    //   .catch(console.error);
   }, []);
 
   if (!user) return <Loading />;

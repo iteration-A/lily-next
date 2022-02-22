@@ -4,8 +4,6 @@ import type {
   InferGetServerSidePropsType,
 } from "next";
 import OutlinedInput from "@mui/material/OutlinedInput";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
 import LoadingButton from "@mui/lab/LoadingButton";
 import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -13,6 +11,7 @@ import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Typography from "@mui/material/Typography";
+import { useSnackbar } from "notistack";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
@@ -39,16 +38,18 @@ const Login: NextPage = ({
     resolver: joiResolver(loginSchema),
   });
 
+  const { enqueueSnackbar } = useSnackbar();
+
   const [loading, setLoading] = useState(false);
-  const [loginError, setLoginError] = useState<null | string>(null);
-  const [loggedInMessage, setLoggedInMessage] = useState<null | string>(null);
   const submitHandler = (data: LoginInput) => {
     setLoading(true);
 
     axios
       .post("/login", { user: data }, { withCredentials: true })
       .then(() => {
-        setLoggedInMessage("Logged in! You are being redirected...");
+        enqueueSnackbar("Logged in! You are being redirected...", {
+          variant: "success",
+        });
         setTimeout(() => router.push("/app"), 2000);
       })
       .catch((error) => {
@@ -58,7 +59,8 @@ const Login: NextPage = ({
           statusCode === 401
             ? "Invalid credentials"
             : "An error ocurred while login you in!";
-        setLoginError(message);
+
+        enqueueSnackbar(message, { variant: "error" });
       });
   };
 
@@ -113,27 +115,6 @@ const Login: NextPage = ({
           </LoadingButton>
         </div>
       </form>
-
-      <Snackbar
-        open={Boolean(loginError)}
-        onClose={() => setLoginError(null)}
-        autoHideDuration={3000}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert severity="error" onClose={() => setLoginError(null)}>
-          {loginError}
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={Boolean(loggedInMessage)}
-        onClose={() => setLoggedInMessage(null)}
-        autoHideDuration={3000}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert onClose={() => setLoggedInMessage(null)}>
-          {loggedInMessage}
-        </Alert>
-      </Snackbar>
     </div>
   );
 };
