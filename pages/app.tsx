@@ -7,30 +7,32 @@ import Loading from "../components/Loading";
 import styles from "./app.module.css";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/router";
-import Navbar from '../components/Navbar'
+import Navbar from "../components/Navbar";
+import AddFriend from "../components/AddFriend";
+import FriendList from "../components/FriendList";
+import useFriends from "../hooks/useFriends";
 
 const Home: NextPage = () => {
   const { enqueueSnackbar } = useSnackbar();
-	const router = useRouter();
+  const router = useRouter();
+
+  const [friends, loadingFriends, errorFriends, refetchFriends] = useFriends();
 
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
-    // artificial delay TODO: DELETE
-    setTimeout(() => {
-      axios("/profiles", { withCredentials: true })
-        .then(({ data }) => {
-          setUser(data);
-        })
-        .catch((error) => {
-          const errorMessage =
-            error.response?.status === 401
-              ? "You need to log in to access this page"
-              : "An error ocurred!";
+    axios("/profiles", { withCredentials: true })
+      .then(({ data }) => {
+        setUser(data);
+      })
+      .catch((error) => {
+        const errorMessage =
+          error.response?.status === 401
+            ? "You need to log in to access this page"
+            : "An error ocurred!";
 
-          enqueueSnackbar(errorMessage, { variant: "error" });
-					router.push('/log-in')
-        });
-    }, 1500);
+        enqueueSnackbar(errorMessage, { variant: "error" });
+        router.push("/log-in");
+      });
   }, []);
 
   if (!user) return <Loading />;
@@ -40,9 +42,12 @@ const Home: NextPage = () => {
       <Head>
         <title>Welcome!</title>
       </Head>
-			<Navbar />
+      <Navbar />
 
-      {user && <h1>Welcome back, {user.first_name}!</h1>}
+      <h1>Welcome back, {user.first_name}!</h1>
+
+      <AddFriend user={user} onNewFriend={refetchFriends} />
+			<FriendList friends={friends} loading={loadingFriends} error={errorFriends} />
     </div>
   );
 };

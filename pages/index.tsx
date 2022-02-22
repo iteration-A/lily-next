@@ -21,6 +21,12 @@ const Index: NextPage = () => {
 					<Link href="/log-in">Log in</Link>
 				</Button>
 			</div>
+
+			<div className={styles.gotoAppContainer}>
+				<Button color="info" variant="contained">
+					<Link href="/app">Go to app</Link>
+				</Button>
+			</div>
 		</div>
   )
 }

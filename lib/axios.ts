@@ -6,7 +6,10 @@ axios.defaults.withCredentials = true;
 axios.defaults.transformResponse = [
   (data) => {
     if (!data) return null;
-    return JSON.parse(data).data;
+		if (data.status < 200 || data.status >= 300) return data;
+		const parsedData = JSON.parse(data).data;
+		if (!parsedData) return data;
+    return parsedData;
   },
 ];
 

@@ -1,12 +1,13 @@
-import { useState } from 'react'
-import type { FormEvent } from 'react'
+import { ChangeEventHandler, useState } from "react";
 
-const useInput = (defaultValue = '') => {
-	const [value, setValue] = useState(defaultValue)
+const useInput = (defaultValue = "") => {
+  const [value, setValue] = useState(defaultValue);
 
-	const updateValue = (e: FormEvent<HTMLInputElement>) => setValue(e.currentTarget.value);
+  const updateValue: ChangeEventHandler<HTMLInputElement> = (e) =>
+    setValue(e.target.value);
 
-	[value, updateValue, () => setValue('')]
-}
+	const clearValue = () => setValue("")
+  return [value, updateValue, clearValue];
+};
 
-export default useInput
+export default useInput;
