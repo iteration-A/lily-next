@@ -46,10 +46,10 @@ const Login: NextPage = ({
     setLoading(true);
 
     axios
-      .post("/login", { user: data })
+      .post("/login", { user: data }, { withCredentials: true })
       .then(() => {
         setLoggedInMessage("Logged in! You are being redirected...");
-        setTimeout(() => router.push("/"), 2000);
+        setTimeout(() => router.push("/app"), 2000);
       })
       .catch((error) => {
         setLoading(false);
@@ -140,6 +140,7 @@ const Login: NextPage = ({
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const { data } = await axios("/settings");
+  console.log(data);
   return {
     props: {
       settings: data as Settings,
