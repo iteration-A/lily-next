@@ -3,7 +3,7 @@ import joi from "joi";
 const loginSchema = joi.object({
   username: joi
     .string()
-    .pattern(/^[a-z0-9_-]*[a-z][a-z0-9_-]*#[0-9]{4}$/i)
+    .pattern(/^[a-z0-9_-]*[a-z][a-z0-9_-]*$/i)
     .min(4)
     .max(20)
     .required()
