@@ -50,7 +50,7 @@ const Login: NextPage = ({
         enqueueSnackbar("Logged in! You are being redirected...", {
           variant: "success",
         });
-        setTimeout(() => router.push("/app"), 2000);
+        router.push("/app");
       })
       .catch((error) => {
         setLoading(false);
@@ -121,7 +121,6 @@ const Login: NextPage = ({
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const { data } = await axios("/settings");
-  console.log(data);
   return {
     props: {
       settings: data as Settings,

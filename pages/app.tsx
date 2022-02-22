@@ -7,6 +7,7 @@ import Loading from "../components/Loading";
 import styles from "./app.module.css";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/router";
+import Navbar from '../components/Navbar'
 
 const Home: NextPage = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -39,6 +40,7 @@ const Home: NextPage = () => {
       <Head>
         <title>Welcome!</title>
       </Head>
+			<Navbar />
 
       {user && <h1>Welcome back, {user.first_name}!</h1>}
     </div>
