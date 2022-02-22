@@ -1,8 +1,4 @@
-import type {
-  NextPage,
-  GetServerSideProps,
-  InferGetServerSidePropsType,
-} from "next";
+import type { NextPage } from "next";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import LoadingButton from "@mui/lab/LoadingButton";
 import InputLabel from "@mui/material/InputLabel";
@@ -17,17 +13,11 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import axios from "../lib/axios";
-import LoginDisabled from "../components/LoginDisabled";
 import loginSchema from "../schemaValidations/login";
-import styles from "./login.module.css";
-import Settings from "../types/Settings.interface";
+import styles from "./log-in.module.css";
 import LoginInput from "../types/LoginInput.interface";
 
-const Login: NextPage = ({
-  settings,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const { allow_registration } = settings;
-
+const Login: NextPage = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const {
@@ -65,8 +55,6 @@ const Login: NextPage = ({
   };
 
   const router = useRouter();
-
-  if (!allow_registration) return <LoginDisabled />;
 
   return (
     <div className={styles.container}>
@@ -117,15 +105,6 @@ const Login: NextPage = ({
       </form>
     </div>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  const { data } = await axios("/settings");
-  return {
-    props: {
-      settings: data as Settings,
-    },
-  };
 };
 
 export default Login;

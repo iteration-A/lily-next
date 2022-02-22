@@ -28,7 +28,7 @@ const Home: NextPage = () => {
               : "An error ocurred!";
 
           enqueueSnackbar(errorMessage, { variant: "error" });
-					router.push('/login')
+					router.push('/log-in')
         });
     }, 1500);
   }, []);
