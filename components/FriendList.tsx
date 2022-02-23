@@ -1,5 +1,6 @@
 import {FC} from "react";
 import User from "../types/User.interface";
+import Button from '@mui/material/Button';
 
 type Props = {
 	friends: User[],
@@ -18,7 +19,9 @@ const FriendList: FC<Props> = ({ friends, error, loading }) => {
 
       <ul>
         {friends.map((friend) => (
-          <li key={friend.id}>{friend.username}</li>
+					<li key={friend.id}>
+						<span>{friend.username}</span>
+					</li>
         ))}
       </ul>
     </div>
