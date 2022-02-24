@@ -15,8 +15,8 @@ const Chat: NextPage = () => {
   const router = useRouter();
   const { user: username } = router.query;
 	const [chatToken] = useChatToken();
-  const [channel, loading, error] = useChatChannel(username as string, chatToken as string);
-  const messages = useMessages(channel);
+  const [channel, roomId, loading, error] = useChatChannel(username as string, chatToken as string);
+  const messages = useMessages(channel, roomId);
 
   const [message, setMessage] = useInput();
 	useEffect(() => {
@@ -34,10 +34,9 @@ const Chat: NextPage = () => {
   return (
     <Layout>
       <Typography variant="h2">{username}</Typography>
-      <Typography variant="h4">{message}</Typography>
       <ul>
         {messages.map((message) => (
-          <li key={message.message}>{message.message}</li>
+          <li key={message.id}>{message.body}</li>
         ))}
       </ul>
       <form onSubmit={sendMessageHandler}>

@@ -1,26 +1,26 @@
 import { useState, useEffect } from "react";
 import { Socket, Channel } from "phoenix";
-import axios from '../lib/axios';
+import axios from "../lib/axios";
 
 type useChatChannel = (
   username: string,
   token: string
-) => [Channel | null, boolean, string | null];
+) => [Channel | null, number | null, boolean, string | null];
 const useChatChannel: useChatChannel = (username, token) => {
   const [channel, setChannel] = useState<Channel | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-	const [roomId, setRoomId] = useState<null|number>(null)
-	useEffect(() => {
-		if (!username) return;
-		axios(`/chats/${username}`)
-			.then(({ data }) => {
-				setRoomId(data.chat_id);
-			})
-		.catch(console.error)
-	}, [username])
+  const [roomId, setRoomId] = useState<null | number>(null);
+  useEffect(() => {
+    if (!username) return;
+    axios(`/chats/${username}`)
+      .then(({ data }) => {
+        setRoomId(Number(data.chat_id));
+      })
+      .catch(console.error);
+  }, [username]);
 
   // connects to channel
   useEffect(() => {
@@ -59,7 +59,7 @@ const useChatChannel: useChatChannel = (username, token) => {
     };
   }, [roomId, token]);
 
-  return [channel, loading, error];
+  return [channel, roomId, loading, error];
 };
 
 export default useChatChannel;
