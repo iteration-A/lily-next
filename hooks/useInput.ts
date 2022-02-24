@@ -5,7 +5,7 @@ const useInput: useInput = (defaultValue = "") => {
   const [value, setValue] = useState(defaultValue);
 
   const updateValue: ChangeEventHandler<HTMLInputElement> = (e) =>
-    setValue(e.target.value);
+    setValue(typeof(e) === "string" ? e : e.target.value);
 
 	const clearValue = () => setValue("")
   return [value, updateValue, clearValue];
