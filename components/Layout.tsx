@@ -14,7 +14,7 @@ const Layout: FC<Props> = ({ children }) => {
     <div className={styles.container}>
       <Navbar />
       <div className={styles.main}>
-        <div>{children}</div>
+        <div className={styles.content}>{children}</div>
         <FriendList
           friends={friends}
           loading={loadingFriends}
