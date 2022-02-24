@@ -9,6 +9,7 @@ const Navbar = () => {
   const router = useRouter();
 
   const logoutHandler = () => {
+		window.localStorage.removeItem("chatToken");
     axios
       .delete("/logout")
       .then(() => {

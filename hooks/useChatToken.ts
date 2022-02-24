@@ -3,16 +3,26 @@ import axios from '../lib/axios';
 
 const useChatToken = () => {
 	const [token, setToken] = useState<string|null>(null);
+	const [error, setError] = useState<string|null>(null);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
+		const token = window.localStorage.getItem("chatToken");
+		if (token) {
+			setToken(token);
+			return;
+		}
+
 		axios("/token")
 			.then(({data}) => {
+				window.localStorage.setItem("chatToken", data.token);
 				setToken(data.token);
 			})
-		.catch(console.error);
+		.catch(() => setError('Unauthorized'))
+		.finally(() => setLoading(false));
 	}, [])
 
-	return token;
+	return [token, loading, error];
 }
 
 export default useChatToken

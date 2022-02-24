@@ -14,8 +14,8 @@ import { FormEventHandler, useEffect } from "react";
 const Chat: NextPage = () => {
   const router = useRouter();
   const { user: username } = router.query;
-	const chatToken = useChatToken();
-  const [channel, loading, error] = useChatChannel(username as string, chatToken);
+	const [chatToken] = useChatToken();
+  const [channel, loading, error] = useChatChannel(username as string, chatToken as string);
   const messages = useMessages(channel);
 
   const [message, setMessage] = useInput();
@@ -29,7 +29,7 @@ const Chat: NextPage = () => {
   };
 
   if (loading) return <Loading />;
-  if (error) return <h1>Something went wrong... Try reloading the page:)</h1>;
+  if (error) return <h1>{error}</h1>;
 
   return (
     <Layout>
