@@ -1,26 +1,26 @@
-import type { NextPage } from "next";
 import Typography from "@mui/material/Typography";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import Button from "@mui/material/Button";
 import { useRouter } from "next/router";
-import Layout from "../../components/Layout";
+import { Socket } from "phoenix";
+import { FormEventHandler, useEffect, useRef, useContext } from "react";
 import useInput from "../../hooks/useInput";
 import useChatChannel from "../../hooks/useChatChannel";
-import useChatToken from "../../hooks/useChatToken";
 import useMessages from "../../hooks/useMessages";
 import useUser from "../../hooks/useUser";
-import Loading from "../../components/Loading";
-import { FormEventHandler, useEffect, useRef } from "react";
 import styles from "./[user].module.css";
+import { SocketContext } from "../../components/Layout";
+import withPrivateRoute from "../../components/withPrivateRoute";
 
-const Chat: NextPage = () => {
+const Chat = () => {
+  const socket = useContext(SocketContext);
+
   const router = useRouter();
   const { user: username } = router.query;
-  const [chatToken] = useChatToken();
-  const [channel, roomId, loading, error] = useChatChannel(
-    username as string,
-    chatToken as string
-  );
+  const [channel, roomId, _loading, error] = useChatChannel({
+    username: username as string,
+    socket: socket as Socket,
+  });
   const messages = useMessages(channel, roomId);
 
   const [me] = useUser();
@@ -35,45 +35,44 @@ const Chat: NextPage = () => {
     channel!.push("new_message", { message: message });
   };
 
-	// auto scroll
-	const lastMessage = useRef<HTMLLIElement>(null);
-	useEffect(() => {
-		if (!lastMessage.current) return;
-		lastMessage.current.scrollIntoView();
-	}, [messages])
+  // auto scroll
+  const lastMessage = useRef<HTMLLIElement>(null);
+  useEffect(() => {
+    if (!lastMessage.current) return;
+    lastMessage.current.scrollIntoView();
+  }, [messages]);
 
-  if (loading) return <Loading />;
   if (error) return <h1>{error}</h1>;
 
   return (
-    <Layout>
+    <div>
       <Typography variant="h2">{username}</Typography>
-			<div className={styles.content}>
-      <ul className={styles.list}>
-        {messages.map((message) => (
-          <li
-            key={message.id}
-            className={`${styles.message} ${
-              message.from === me?.id && styles.mine
-            }`}
-						ref={lastMessage}
-          >
-            {message.body}
-          </li>
-        ))}
-      </ul>
-      <form onSubmit={sendMessageHandler}>
-        <OutlinedInput
-					sx={{ width: "80%" }}
-          value={message}
-          onChange={setMessage}
-          placeholder="Say hi"
-        />
-        <Button>Send</Button>
-      </form>
-			</div>
-    </Layout>
+      <div className={styles.content}>
+        <ul className={styles.list}>
+          {messages.map((message) => (
+            <li
+              key={message.id}
+              className={`${styles.message} ${
+                message.from === me?.id && styles.mine
+              }`}
+              ref={lastMessage}
+            >
+              {message.body}
+            </li>
+          ))}
+        </ul>
+        <form onSubmit={sendMessageHandler}>
+          <OutlinedInput
+            sx={{ width: "80%" }}
+            value={message}
+            onChange={setMessage}
+            placeholder="Say hi"
+          />
+          <Button>Send</Button>
+        </form>
+      </div>
+    </div>
   );
 };
 
-export default Chat;
+export default withPrivateRoute(Chat)

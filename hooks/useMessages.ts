@@ -29,6 +29,7 @@ const useMessages: useMessages = (channel, roomId) => {
     const addMessage = ({ message }: { message: Message }) =>
       setMessages([...messages, message]);
     channel.on("new_message", addMessage);
+    channel.on("presence_diff", console.log);
 
     return () => {
       channel.off("new_message");

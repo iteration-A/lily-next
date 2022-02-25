@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from '../lib/axios';
 
-const useChatToken = () => {
+type useChatToken = () => [string|null, boolean, string|null]
+const useChatToken: useChatToken = () => {
 	const [token, setToken] = useState<string|null>(null);
 	const [error, setError] = useState<string|null>(null);
 	const [loading, setLoading] = useState(true);

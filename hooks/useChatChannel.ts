@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import { Socket, Channel } from "phoenix";
 import axios from "../lib/axios";
 
-type useChatChannel = (
+type args = {
   username: string,
-  token: string
-) => [Channel | null, number | null, boolean, string | null];
-const useChatChannel: useChatChannel = (username, token) => {
+	socket: Socket|null
+}
+type useChatChannel = (args: args) => [Channel | null, number | null, boolean, string | null];
+const useChatChannel: useChatChannel = ({ username, socket }) => {
   const [channel, setChannel] = useState<Channel | null>(null);
 
   const [loading, setLoading] = useState(true);
@@ -25,17 +26,8 @@ const useChatChannel: useChatChannel = (username, token) => {
   // connects to channel
   useEffect(() => {
     if (!roomId) return;
-    if (!token) return;
+    if (!socket) return;
     if (channel) return;
-
-    const socket = new Socket(
-      `${process.env.NEXT_PUBLIC_API_URL_SOCKET}/socket`,
-      {
-        params: {
-          token,
-        },
-      }
-    );
 
     socket.connect();
     const _channel = socket.channel(`room:${roomId}`);
@@ -54,10 +46,9 @@ const useChatChannel: useChatChannel = (username, token) => {
     return () => {
       if (!socket) return;
       if (!channel) return;
-      channel.leave();
-      socket.disconnect();
+      (channel as Channel).leave();
     };
-  }, [roomId, token]);
+  }, [roomId, socket]);
 
   return [channel, roomId, loading, error];
 };
